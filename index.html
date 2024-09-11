@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de pagos</title>
+<style>
+
+  th.mostrar-cuotas {
+    background-color: black;
+    color: white;
+  }
+  
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background-color: #ff8c00;
+        color: black;
+    }
+    #resultado {
+        color: black; /* Texto negro en el resultado */
+    }
+
+    .container {
+        max-width: 800px;
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+        background-position: top right;
+        background-repeat: no-repeat;
+        background-size: 100px auto; /* Ajusta el tamaño de la imagen según tus preferencias */
+    }
+	label {
+    display: inline-block;
+    width: 200px; /* Ajusta el ancho según tus necesidades */
+  }
+
+    h2 {
+        color: #ff8c00;
+        text-shadow: 1px 1px 1px #333;
+    }
+
+    input, select {
+        width: 250px;
+        margin-bottom: 10px;
+    }
+
+    button {
+        margin-top: 16px;
+        background-color: #ff8c00;
+        color: white;
+        text-shadow: 1px 1px 1px #333;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    .btn-limpiar {
+        display: inline-block;
+        margin-top: 10px;
+        background-color: #ff8c00;
+        color: white;
+        text-shadow: 1px 1px 1px #333;
+    }
+
+    .btn-mostrar,
+    .btn-carta,
+    .btn-imprimir {
+        display: inline-block;
+        margin-right: 10px;
+        background-color: #ff8c00;
+        color: white;
+        text-shadow: 1px 1px 1px #333;
+    }
+
+    table {
+        width: 100%;
+        margin-top: 20px;
+        border-collapse: collapse;
+
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+        color: black;
+    }
+
+    th {
+        background-color: #ff8c00;
+        color: white;
+    }
+
+    #resultado {
+        color: black;
+    }
+	
+	    .imagen-container {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: none; /* Oculta la imagen en pantalla */
+    }
+    .imagen-container {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+
+    .pdf-container {
+        margin-top: 20px;
+        display: none;
+        position: relative;
+    }
+
+    .pdf-image {
+        width: 100%;
+        height: auto;
+    }
+
+    .text-overlay {
+        position: absolute;
+        top: 7.98%;
+        left: 16.5%;
+        color: black;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .text-overlay3 {
+        position: absolute;
+        top: 26%;
+        left: 26.90%;
+        color: black;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .text-overlay4 {
+        position: absolute;
+        top: 22.99%;
+        left: 23%;
+        color: black;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+   @media print {
+   
+   @page {
+    size: auto; /* Automático para no forzar la orientación */
+    margin: 13mm;
+}
+ 
+    body {
+        background-color: white;
+        margin: 0; /* Elimina márgenes para asegurar más espacio para el contenido */
+        padding: 0; /* Elimina relleno adicional */
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        page-break-inside: auto; 
+    }
+
+    tr {
+        page-break-inside: avoid; 
+        page-break-after: auto;
+    }
+
+    td, th {
+        font-size: 10px;
+        border: 1px solid #ddd;
+        padding: 5px;
+        text-align: left;
+        color: black; /* Texto negro */
+    }
+
+    th {
+        background-color: #ff8c00;
+        color: white;
+    }
+
+    .container {
+        padding: 10px; /* Reduce padding para maximizar el espacio en la hoja */
+    }
+
+    .imagen-container {
+        display: none;
+    }
+
+   .pdf-container {
+        display: block;
+        text-align: center; /* Alinea el contenedor de la imagen al centro */
+    }
+	
+    .pdf-image {
+        margin: 0 auto;
+        width: auto;
+        height: auto;
+        max-width: 100%;
+    }
+
+    .text-overlay {
+        top: 7.98%;
+        left: 16.5%;
+        font-size: 12px;
+    }
+
+    .text-overlay3 {
+        top: 26%;
+        left: 26.90%;
+        font-size: 12px;
+    }
+
+    .text-overlay4 {
+        top: 22.8%;
+        left: 23%;
+        font-size: 12px;
+    }
+
+    @page {
+        margin: 13mm; /* Establece márgenes consistentes en la página */
+    }
+}
+
+@media print {
+    .image-page {
+        page-break-before: always; /* Salto de página antes de la imagen */
+        page-break-after: always;  /* Salto de página después de la imagen */
+        text-align: center;        /* Centra la imagen */
+    }
+}
+
+
+</style>
+
+</head>
+<body>
+    <div class="container">
+        <h2>Calculadora de pagos</h2>
+
+        <form>
+            <div>
+                <label for="empresa">Seleccione Empresa:</label>
+                <select id="empresa" onchange="updateText()">
+                    <option value="hollem">Hollem</option>
+                    <option value="callem">Callem</option>
+                </select>
+            </div>
+            <div>
+                <label for="nombre">Nombre del Cliente:</label>
+                <input type="text" id="nombre" placeholder="Ingrese el nombre del cliente" oninput="updateText()">
+            </div>
+            <div>
+                <label for="monto">Monto del préstamo:</label>
+                <input type="text" id="monto" placeholder="Ingrese el monto del préstamo" oninput="formatoMonto(); updateText()">
+            </div>
+            <div>
+                <label for="tasa">Tasa de interés (%):</label>
+                <input type="number" id="tasa" placeholder="Ingrese la tasa de interés">
+            </div>
+            <div>
+                <label for="plazo">Plazo (años):</label>
+                <input type="number" id="plazo" placeholder="Ingrese el plazo del préstamo">
+            </div>
+            <div>
+                <label for="fecha">Seleccione Mes y Año:</label>
+                <select id="fecha" onchange="updateText()"></select>
+            </div>
+        </form>
+
+        <button type="button" class="btn-mostrar" onclick="mostrarCuotas()">Mostrar Cuotas en Quetzales</button>
+        <button type="button" class="btn-carta" onclick="toggleImage()">Carta de Bienvenida</button>
+        <button type="button" class="btn-imprimir" onclick="imprimirCuotas()">Imprimir Cuotas</button>
+        <button type="button" class="btn-limpiar" onclick="limpiarFormulario()">Limpiar</button>
+		
+		<br>
+		
+
+        <div id="resultado" style="display: none; margin-top: 20px; padding: 10px; border: 2px solid #ff8c00; background-color: white; font-size: 15px;"></div>
+        <div id="tabla-container"></div>
+        <div class="pdf-container" id="pdf-container">
+            <img src="hollem.jpg" alt="Página 1 del PDF" class="pdf-image">
+            <div id="nameOverlay" class="text-overlay"></div>
+            <div id="montoOverlay" class="text-overlay4"></div> <!-- Ahora muestra la cuota mensual -->
+            <div id="fechaOverlay" class="text-overlay3"></div> <!-- Elemento para la fecha -->
+        </div>
+    </div>
+
+    <script>
+        function formatoMonto() {
+            let monto = document.getElementById('monto').value.replace(/,/g, '');
+            monto = parseFloat(monto.replace(/[$]/g, ''));
+            document.getElementById('monto').value = monto.toLocaleString('en-US');
+        }
+
+        function limpiarFormulario() {
+            document.getElementById('monto').value = '';
+            document.getElementById('tasa').value = '';
+            document.getElementById('plazo').value = '';
+            document.getElementById('nombre').value = '';
+            document.getElementById('resultado').innerHTML = '';
+            document.getElementById('tabla-container').innerHTML = '';
+            document.getElementById('pdf-container').style.display = 'none';
+        }
+
+        function calcularCuota() {
+            var monto = parseFloat(document.getElementById('monto').value.replace(/[,Q]/g, ''));
+            var tasa = parseFloat(document.getElementById('tasa').value) / 100 / 12;
+            var plazo = parseFloat(document.getElementById('plazo').value) * 12;
+            return (monto * tasa) / (1 - Math.pow(1 + tasa, -plazo));
+        }
+
+        function mostrarCuotas() {
+            var cuota = calcularCuota();
+            var monto = parseFloat(document.getElementById('monto').value.replace(/[,Q]/g, ''));
+            var tasa = parseFloat(document.getElementById('tasa').value) / 100 / 12;
+            var plazo = parseFloat(document.getElementById('plazo').value) * 12;
+            var { mes, anio } = obtenerMesYAnioSeleccionados();
+            var fecha = new Date(anio, mes - 1, 1);
+            if (isNaN(cuota)) {
+                document.getElementById('resultado').innerHTML = 'Primero calcula la cuota mensual.';
+                return;
+            }
+            var tablaContainer = document.getElementById('tabla-container');
+            tablaContainer.innerHTML = '';
+            var tabla = document.createElement('table');
+            var tbody = document.createElement('tbody');
+            var encabezados = ['Meses', 'Balance Inicial', 'Intereses', 'Capital', 'Cuota', 'Balance Final'];
+            var encabezadoRow = document.createElement('tr');
+            encabezados.forEach(function (encabezado) {
+                var th = document.createElement('th');
+                th.textContent = encabezado;
+                encabezadoRow.appendChild(th);
+            });
+            tabla.appendChild(encabezadoRow);
+            var balanceInicial = monto;
+            for (var i = 0; i < plazo; i++) {
+                var fila = document.createElement('tr');
+                var nombreMes = fecha.toLocaleDateString('es-ES', { month: 'long' });
+                var year = fecha.getFullYear();
+                var mes = document.createElement('td');
+                mes.textContent = 'Mes ' + (i + 1) + ': ' + nombreMes + ' ' + year;
+                fila.appendChild(mes);
+                var intereses = balanceInicial * tasa;
+                var capital = cuota - intereses;
+                var balanceFinal = balanceInicial - capital;
+                var celdas = [
+                    'Q' + balanceInicial.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'),
+                    'Q' + intereses.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'),
+                    'Q' + capital.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'),
+                    'Q' + cuota.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'),
+                    'Q' + balanceFinal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')
+                ];
+                celdas.forEach(function (valor) {
+                    var td = document.createElement('td');
+                    td.textContent = valor;
+                    fila.appendChild(td);
+                });
+                tbody.appendChild(fila);
+                balanceInicial = balanceFinal;
+                fecha.setMonth(fecha.getMonth() + 1);
+            }
+            tabla.appendChild(tbody);
+            tablaContainer.appendChild(tabla);
+            document.getElementById('resultado').innerHTML = '';
+            document.getElementById('pdf-container').style.display = 'block';
+            updateText();
+        }
+
+function updateText() {
+    var nombre = document.getElementById('nombre').value;
+    var empresa = document.getElementById('empresa').value;
+    var cuota = calcularCuota();
+    var { mes, anio } = obtenerMesYAnioSeleccionados();
+    var nombreMes = new Date(anio, mes - 1).toLocaleDateString('es-ES', { month: 'long' });
+
+    document.getElementById('nameOverlay').textContent = nombre;
+    document.getElementById('fechaOverlay').textContent = nombreMes + ' ' + anio;
+    document.getElementById('montoOverlay').textContent = 'Q' + cuota.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+
+    var pdfImage = document.querySelector('.pdf-image');
+
+    if (empresa === 'hollem') {
+        pdfImage.src = 'https://live.staticflickr.com/65535/53957071910_3b075b5e60_k.jpg';
+        document.querySelector('.text-overlay').style.top = '7.98%';
+        document.querySelector('.text-overlay').style.left = '16.5%';
+        document.querySelector('.text-overlay3').style.top = '26%';
+        document.querySelector('.text-overlay3').style.left = '26.90%';
+        document.querySelector('.text-overlay4').style.top = '22.99%';
+        document.querySelector('.text-overlay4').style.left = '23%';
+    } else if (empresa === 'callem') {
+        pdfImage.src = 'https://live.staticflickr.com/65535/53956800886_945d44a5fe_k.jpg';
+        document.querySelector('.text-overlay').style.top = '8.1%'; // Ajustar según sea necesario
+        document.querySelector('.text-overlay').style.left = '16%'; // Ajustar según sea necesario
+        document.querySelector('.text-overlay3').style.top = '27.4%'; // Ajustar según sea necesario
+        document.querySelector('.text-overlay3').style.left = '26.5%'; // Ajustar según sea necesario
+        document.querySelector('.text-overlay4').style.top = '24.3%'; // Ajustar según sea necesario
+        document.querySelector('.text-overlay4').style.left = '22.8%'; // Ajustar según sea necesario
+    }
+}
+
+
+
+        function obtenerMesYAnioSeleccionados() {
+            var selectFecha = document.getElementById('fecha');
+            var fechaSeleccionada = selectFecha.value.split('-');
+            return { mes: parseInt(fechaSeleccionada[1]), anio: parseInt(fechaSeleccionada[0]) };
+        }
+
+        function toggleImage() {
+            var pdfContainer = document.getElementById('pdf-container');
+            pdfContainer.style.display = pdfContainer.style.display === 'none' ? 'block' : 'none';
+            updateText();
+        }
+
+  function imprimirCuotas() {
+  // Oculta los elementos no deseados antes de imprimir
+  var botones = document.querySelectorAll('.btn-limpiar, .btn-mostrar, .btn-imprimir, .btn-carta');
+  for (var i = 0; i < botones.length; i++) {
+    botones[i].style.display = 'none';
+  }
+
+  // Imprime la ventana
+  window.print();
+
+  // Restaura la visibilidad de los botones después de imprimir
+  for (var i = 0; i < botones.length; i++) {
+    botones[i].style.display = 'block';
+  }
+}
+
+        function inicializarFechaSelector() {
+            var fechaActual = new Date();
+            var selectFecha = document.getElementById('fecha');
+            var mesActual = fechaActual.getMonth();
+            var anioActual = fechaActual.getFullYear();
+            for (var i = 0; i < 12; i++) {
+                var opcion = document.createElement('option');
+                var fecha = new Date(anioActual, mesActual + i, 1);
+                var nombreMes = fecha.toLocaleDateString('es-ES', { month: 'long' });
+                opcion.value = fecha.getFullYear() + '-' + String(fecha.getMonth() + 1).padStart(2, '0');
+                opcion.text = nombreMes + ' ' + fecha.getFullYear();
+                selectFecha.add(opcion);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            inicializarFechaSelector();
+        });
+    </script>
+</body>
+</html>
+
+
+
