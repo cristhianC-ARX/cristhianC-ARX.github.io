@@ -158,6 +158,15 @@ body {
         font-size: 14px;
         font-weight: bold;
     }
+	
+	    .text-overlay5 {
+        position: absolute;
+        top: 23.99%;
+        left: 24%;
+        color: black;
+        font-size: 14px;
+        font-weight: bold;
+    }
 
    @media print {
     body {
@@ -226,7 +235,12 @@ body {
         left: 23%;
         font-size: 12px;
     }
-
+	
+	    .text-overlay5 {
+        top: 23.8%;
+        left: 24%;
+        font-size: 12px;
+    }
    @page {
         margin: 13mm;
     }
@@ -275,6 +289,15 @@ body {
                 <label for="tasa">Tasa de interés (%):</label>
                 <input type="number" id="tasa" placeholder="Ingrese la tasa de interés">
             </div>
+			
+			            <div>
+                <label for="tipoCuota">Tipo de cuota:</label>
+                <select id="tipoCuota" onchange="updateText()">
+                    <option value="Cuota Nivelada">Cuota Nivelada</option>
+                    <option value="Cuota de Intereses">Cuota de Intereses</option>
+                </select>
+            </div>
+			
             <div>
                 <label for="plazo">Plazo (años):</label>
                 <input type="number" id="plazo" placeholder="Ingrese el plazo del préstamo">
@@ -300,6 +323,7 @@ body {
             <div id="nameOverlay" class="text-overlay"></div>
             <div id="montoOverlay" class="text-overlay4"></div> <!-- Ahora muestra la cuota mensual -->
             <div id="fechaOverlay" class="text-overlay3"></div> <!-- Elemento para la fecha -->
+			<div id="tipoCuotaOverlay" class="text-overlay5"></div> <!-- Elemento para el tipo de cuota -->
         </div>
     </div>
 
@@ -390,29 +414,37 @@ function updateText() {
     var cuota = calcularCuota();
     var { mes, anio } = obtenerMesYAnioSeleccionados();
     var nombreMes = new Date(anio, mes - 1).toLocaleDateString('es-ES', { month: 'long' });
+	var tipoCuota = document.getElementById('tipoCuota').value;
+
 
     document.getElementById('nameOverlay').textContent = nombre;
+    document.getElementById('tipoCuotaOverlay').textContent = tipoCuota;
     document.getElementById('fechaOverlay').textContent = nombreMes + ' ' + anio;
     document.getElementById('montoOverlay').textContent = 'Q' + cuota.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+
 
     var pdfImage = document.querySelector('.pdf-image');
 
     if (empresa === 'hollem') {
-        pdfImage.src = 'https://live.staticflickr.com/65535/53957071910_3b075b5e60_k.jpg';
+        pdfImage.src = 'https://live.staticflickr.com/65535/54099321827_50c6ffaf5d_h.jpg';
         document.querySelector('.text-overlay').style.top = '7.98%';
         document.querySelector('.text-overlay').style.left = '16.5%';
         document.querySelector('.text-overlay3').style.top = '26%';
         document.querySelector('.text-overlay3').style.left = '26.90%';
         document.querySelector('.text-overlay4').style.top = '22.99%';
         document.querySelector('.text-overlay4').style.left = '23%';
+        document.querySelector('.text-overlay5').style.top = '24.50%';
+        document.querySelector('.text-overlay5').style.left = '23%';
     } else if (empresa === 'callem') {
-        pdfImage.src = 'https://live.staticflickr.com/65535/53956800886_945d44a5fe_k.jpg';
+        pdfImage.src = 'https://live.staticflickr.com/65535/54100637610_6caeae88f8_h.jpg';
         document.querySelector('.text-overlay').style.top = '8.1%'; // Ajustar según sea necesario
         document.querySelector('.text-overlay').style.left = '16%'; // Ajustar según sea necesario
         document.querySelector('.text-overlay3').style.top = '27.4%'; // Ajustar según sea necesario
         document.querySelector('.text-overlay3').style.left = '26.5%'; // Ajustar según sea necesario
         document.querySelector('.text-overlay4').style.top = '24.3%'; // Ajustar según sea necesario
         document.querySelector('.text-overlay4').style.left = '22.8%'; // Ajustar según sea necesario
+        document.querySelector('.text-overlay5').style.top = '25.80%';
+        document.querySelector('.text-overlay5').style.left = '23%';
     }
 }
 
