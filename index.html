@@ -1,3 +1,6 @@
+
+<!-- Autor: Cristhian Aguilar -->
+
 <!-- Autor: Cristhian Aguilar -->
 
 <!-- Autor: Cristhian Aguilar -->
@@ -425,12 +428,37 @@ body {
             return (monto * tasa) / (1 - Math.pow(1 + tasa, -plazo));
         }
 
+        // Función para obtener el último día del mes
+        function obtenerUltimoDiaDelMes(año, mes) {
+            return new Date(año, mes + 1, 0).getDate();
+        }
+
+        // Función para calcular la próxima fecha de pago
+        function calcularProximaFecha(fechaBase, diaOriginal, mesesAñadir) {
+            var año = fechaBase.getFullYear();
+            var mes = fechaBase.getMonth() + mesesAñadir;
+            
+            // Ajustar año si el mes se sale del rango
+            while (mes > 11) {
+                mes -= 12;
+                año += 1;
+            }
+            
+            var ultimoDiaDelMes = obtenerUltimoDiaDelMes(año, mes);
+            
+            // Si el día original no existe en el nuevo mes, usar el último día del mes
+            var diaFinal = diaOriginal > ultimoDiaDelMes ? ultimoDiaDelMes : diaOriginal;
+            
+            return new Date(año, mes, diaFinal);
+        }
+
         function mostrarCuotas() {
             var cuota = calcularCuota();
             var monto = parseFloat(document.getElementById('monto').value.replace(/[,Q]/g, ''));
             var tasa = parseFloat(document.getElementById('tasa').value) / 100 / 12;
             var plazo = parseFloat(document.getElementById('plazo').value) * 12;
-            var fecha = fechaSelector.selectedDates[0];
+            var fechaInicial = fechaSelector.selectedDates[0];
+            var diaOriginal = fechaInicial.getDate(); // Guardamos el día original
             
             if (isNaN(cuota)) {
                 document.getElementById('resultado').innerHTML = 'Primero calcula la cuota mensual.';
@@ -455,9 +483,11 @@ body {
             
             for (var i = 0; i < plazo; i++) {
                 var fila = document.createElement('tr');
-                var nuevaFecha = new Date(fecha);
-                nuevaFecha.setMonth(fecha.getMonth() + i);
+                
+                // Usar la nueva función para calcular fechas correctamente
+                var nuevaFecha = calcularProximaFecha(fechaInicial, diaOriginal, i);
                 var nombreMes = nuevaFecha.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+                
                 var mes = document.createElement('td');
                 mes.textContent = 'Mes ' + (i + 1) + ': ' + nombreMes;
                 fila.appendChild(mes);
@@ -570,4 +600,4 @@ body {
         }
     </script>
 </body>
-</html> 
+</html>
